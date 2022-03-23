@@ -9,6 +9,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library(tidyverse)
+library(ggplot2)
 library(readxl)
 library(readxl)
 data <- read.csv("PGA_17_22.csv")
@@ -16,6 +17,17 @@ newdata <- data[c(1:5,12:14,21,25:27,29,31:37)]
 ```
 
 ```{r}
+masters <- newdata %>% filter(tournament.name == "Valspar Championship") %>%
+  filter(pos == 1)
+
+tidy_tourny <-masters %>%
+  pivot_longer(c(15:20), names_to = "Stat_cat", values_to = "response") 
+
+  ggplot(data = tidy_tourny, aes(y = response, x = Stat_cat)) +
+  geom_boxplot() +
+  facet_wrap(vars(player))+
+  labs(x = "Strokes gained Catagory", y = "Response (on a -5 to 5 scale)")
+
 
 ```
 
