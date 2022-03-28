@@ -13,3 +13,6 @@ Created an initial static visualization of strokes gained from winners as an ide
 ##March 28th Beginning of Class
 
 Continued to think about what I wanted my shiny app to display. Created another static plot that would go with the strokes gained from each torunament. Also looked into a radar chart. Even though they are typically not good.
+
+## March 28th End of Class
+Continued to play around with Radar Chart and transitioning static plots to shiny plots

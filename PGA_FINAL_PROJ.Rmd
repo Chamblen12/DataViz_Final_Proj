@@ -54,10 +54,12 @@ library(hrbrthemes)
 library(fmsb)
 library(colormap)
 
-
-data_compare <- data_compare %>% filter(player == "Jon Rahm" || player == "Justin Thomas")
-
 data_compare <- newdata[c(9,15:20)]
+data_compare <- data_compare %>% filter(player == "Jon Rahm" | player == "Jordan Spieth")
+
+JJ <- data_compare %>% group_by(player) %>%
+  summarise(avg_putt = sum(sg_putt))
+
 
 
 colors_border=c( rgb(0.2,0.5,0.5,0.9), rgb(0.8,0.2,0.5,0.9)  )
