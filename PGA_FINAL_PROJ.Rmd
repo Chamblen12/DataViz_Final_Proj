@@ -25,9 +25,58 @@ tidy_tourny <-masters %>%
 
   ggplot(data = tidy_tourny, aes(y = response, x = Stat_cat)) +
   geom_boxplot() +
-  facet_wrap(vars(player))+
-  labs(x = "Strokes gained Catagory", y = "Response (on a -5 to 5 scale)")
+  #facet_wrap(vars(player))+
+  labs(x = "Strokes gained Catagory", y = "Strokes Gained on the Field")
+
+```
+
+## user selects tournament and sees avg box plot of past winners in each catagpry
+
+```{r}
+masters <- masters %>% mutate(player = fct_reorder(player, desc(strokes)))
+ggplot(data = masters, aes(x = player, y = strokes))+
+  geom_point() + 
+  geom_segment( aes(x= player, xend= player, y=0, yend=strokes))+
+  coord_flip()+
+  geom_text(aes(label = strokes), vjust = 1.5, colour = "black")+
+  ylim(0,288)
+
+```
+
+## graph of last 6 winners score 
 
 
+```{r}
+library(tidyverse)
+library(viridis)
+library(patchwork)
+library(hrbrthemes)
+library(fmsb)
+library(colormap)
+
+
+data_compare <- data_compare %>% filter(player == "Jon Rahm" || player == "Justin Thomas")
+
+data_compare <- newdata[c(9,15:20)]
+
+
+colors_border=c( rgb(0.2,0.5,0.5,0.9), rgb(0.8,0.2,0.5,0.9)  )
+colors_in=c( rgb(0.2,0.5,0.5,0.4), rgb(0.8,0.2,0.5,0.4)  )
+
+# Custom the radarChart !
+radarchart( data_compare, axistype=1, 
+
+  #custom polygon
+  pcol=colors_border , pfcol=colors_in , plwd=4, plty=1 , 
+
+  #custom the grid
+  cglcol="grey", cglty=1, axislabcol="grey", caxislabels=seq(0,20,5), cglwd=1.1,
+
+  #custom labels
+  vlcex=0.8 
+  )
+
+# Legend
+legend(x=0.85, y=1, legend = c("Golfer1", "Golfer2"), bty = "n", pch=20 , col=colors_border , text.col = "black", cex=0.9, pt.cex=1.6)
 ```
 

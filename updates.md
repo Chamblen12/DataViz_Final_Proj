@@ -9,3 +9,7 @@ Found data set and selected only the required variables. Currently thinking abou
 ## March 23 End of Class
 
 Created an initial static visualization of strokes gained from winners as an idea for shiny presentation. 
+
+##March 28th Beginning of Class
+
+Continued to think about what I wanted my shiny app to display. Created another static plot that would go with the strokes gained from each torunament. Also looked into a radar chart. Even though they are typically not good.
