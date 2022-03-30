@@ -31,9 +31,48 @@ tidy_tourny <-masters %>%
 ```
 
 ## user selects tournament and sees avg box plot of past winners in each catagpry
+```{r}
+library(shiny)
+
+ui <- fluidPage(
+  sidebarLayout(
+    sidebarPanel(selectizeInput(inputId ="Tournychoice",
+                   label = "Choose a Tournament",
+                   choices = levels(factor(newdata$tournament.name)),
+                   selected = ("Valspar Championship"))),
+    mainPanel(plotOutput(outputId = "majorplot"))
+  )
+)
+
+
+
+server <- function(input, output, session) {
+  
+  df_update <- reactive({
+    
+    df_stat <- newdata %>% filter(tournament.name == input$Tournychoice) 
+    
+    df_win <- df_stat %>% filter(pos == 1)%>%
+      pivot_longer(c(15:20), names_to = "Stat_cat", values_to = "response")
+  })
+  
+  
+  output$majorplot <- renderPlot({
+    ggplot(data = df_update(), aes(x = Stat_cat, y = response)) +
+      geom_boxplot() +
+      labs(x = "Strokes gained Catagory", 
+           y = "Strokes Gained on the Field")
+
+  })
+}
+
+shinyApp(ui, server)
+
+```
 
 ```{r}
 masters <- masters %>% mutate(player = fct_reorder(player, desc(strokes)))
+
 ggplot(data = masters, aes(x = player, y = strokes))+
   geom_point() + 
   geom_segment( aes(x= player, xend= player, y=0, yend=strokes))+

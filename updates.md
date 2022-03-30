@@ -16,3 +16,7 @@ Continued to think about what I wanted my shiny app to display. Created another 
 
 ## March 28th End of Class
 Continued to play around with Radar Chart and transitioning static plots to shiny plots
+
+
+## March 30th Beginning of Class
+Got a working shiny program for first graph, want to add second tab and other graphs to shiny. 
