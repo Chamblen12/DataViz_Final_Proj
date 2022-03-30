@@ -20,3 +20,6 @@ Continued to play around with Radar Chart and transitioning static plots to shin
 
 ## March 30th Beginning of Class
 Got a working shiny program for first graph, want to add second tab and other graphs to shiny. 
+
+## March 3oth End of Class
+Worked on adding a second graph below first one using fluidRow but struggled. Got better understanding of statistics im using and what they actually reprsent. 

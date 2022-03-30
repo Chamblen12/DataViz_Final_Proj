@@ -35,15 +35,22 @@ tidy_tourny <-masters %>%
 library(shiny)
 
 ui <- fluidPage(
-  sidebarLayout(
-    sidebarPanel(selectizeInput(inputId ="Tournychoice",
-                   label = "Choose a Tournament",
-                   choices = levels(factor(newdata$tournament.name)),
-                   selected = ("Valspar Championship"))),
-    mainPanel(plotOutput(outputId = "majorplot"))
-  )
+        fluidRow(
+          column(6,
+            sidebarLayout(
+              sidebarPanel(
+                selectizeInput(inputId ="Tournychoice",
+                               label = "Choose a Tournament",
+                               choices = levels(
+                                  factor(newdata$tournament.name)),
+                               selected = ("Valspar Championship"))),
+                  mainPanel(plotOutput(outputId = "majorplot"))))),
+        fluidRow(
+          column(8,
+            plotOutput(outputId = "minorplot"))
+  
 )
-
+)
 
 
 server <- function(input, output, session) {
@@ -53,17 +60,22 @@ server <- function(input, output, session) {
     df_stat <- newdata %>% filter(tournament.name == input$Tournychoice) 
     
     df_win <- df_stat %>% filter(pos == 1)%>%
-      pivot_longer(c(15:20), names_to = "Stat_cat", values_to = "response")
+      pivot_longer(c(15:20), 
+                   names_to = "Stat_cat", values_to = "response") %>%
+      mutate(player = fct_reorder(player, desc(strokes))) 
+
   })
   
   
   output$majorplot <- renderPlot({
+    
     ggplot(data = df_update(), aes(x = Stat_cat, y = response)) +
       geom_boxplot() +
       labs(x = "Strokes gained Catagory", 
            y = "Strokes Gained on the Field")
-
   })
+  
+  
 }
 
 shinyApp(ui, server)
