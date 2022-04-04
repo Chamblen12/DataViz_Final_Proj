@@ -23,3 +23,6 @@ Got a working shiny program for first graph, want to add second tab and other gr
 
 ## March 3oth End of Class
 Worked on adding a second graph below first one using fluidRow but struggled. Got better understanding of statistics im using and what they actually reprsent. 
+
+## April 4th Beginning of Class
+Didn't make much progress on the shiny end of things. Graph not always popping up in correct position. Radar chart not comparing stats either. 

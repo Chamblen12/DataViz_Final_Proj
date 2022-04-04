@@ -82,6 +82,9 @@ shinyApp(ui, server)
 
 ```
 
+
+
+
 ```{r}
 masters <- masters %>% mutate(player = fct_reorder(player, desc(strokes)))
 
