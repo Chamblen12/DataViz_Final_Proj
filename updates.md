@@ -26,3 +26,6 @@ Worked on adding a second graph below first one using fluidRow but struggled. Go
 
 ## April 4th Beginning of Class
 Didn't make much progress on the shiny end of things. Graph not always popping up in correct position. Radar chart not comparing stats either. 
+
+## April 4th End of Class
+Got both plots to show up and managed to order the bottom plot by strokes. Would like to change top plot to multiple lines plot and maybe have a way of showing par for the course as well. 

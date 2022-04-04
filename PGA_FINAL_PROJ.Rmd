@@ -14,6 +14,7 @@ library(readxl)
 library(readxl)
 data <- read.csv("PGA_17_22.csv")
 newdata <- data[c(1:5,12:14,21,25:27,29,31:37)]
+newdata$play_yr <- paste(newdata$player, newdata$season)
 ```
 
 ```{r}
@@ -28,6 +29,11 @@ tidy_tourny <-masters %>%
   #facet_wrap(vars(player))+
   labs(x = "Strokes gained Catagory", y = "Strokes Gained on the Field")
 
+```
+
+
+```{r}
+player_year <- newdata %>% mutate(plyr_yr = as.character(player) + as.character(season))
 ```
 
 ## user selects tournament and sees avg box plot of past winners in each catagpry
@@ -62,7 +68,7 @@ server <- function(input, output, session) {
     df_win <- df_stat %>% filter(pos == 1)%>%
       pivot_longer(c(15:20), 
                    names_to = "Stat_cat", values_to = "response") %>%
-      mutate(player = fct_reorder(player, desc(strokes))) 
+      mutate(play_yr = fct_reorder(play_yr, desc(strokes))) 
 
   })
   
@@ -73,6 +79,18 @@ server <- function(input, output, session) {
       geom_boxplot() +
       labs(x = "Strokes gained Catagory", 
            y = "Strokes Gained on the Field")
+  })
+  
+  output$minorplot <- renderPlot({
+    
+    ggplot(data = df_update(), aes(x = play_yr, y = strokes))+
+      geom_point() + 
+      geom_segment( aes(x= play_yr, xend= play_yr, y=0, yend=strokes))+
+      coord_flip()+
+      geom_text(aes(label = strokes), vjust = 1.5, colour = "black")+
+      ylim(0,288)
+    
+    
   })
   
   
@@ -135,4 +153,4 @@ radarchart( data_compare, axistype=1,
 # Legend
 legend(x=0.85, y=1, legend = c("Golfer1", "Golfer2"), bty = "n", pch=20 , col=colors_border , text.col = "black", cex=0.9, pt.cex=1.6)
 ```
-
+due to missing data ?
