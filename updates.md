@@ -28,4 +28,7 @@ Worked on adding a second graph below first one using fluidRow but struggled. Go
 Didn't make much progress on the shiny end of things. Graph not always popping up in correct position. Radar chart not comparing stats either. 
 
 ## April 4th End of Class
-Got both plots to show up and managed to order the bottom plot by strokes. Would like to change top plot to multiple lines plot and maybe have a way of showing par for the course as well. 
+Got both plots to show up and managed to order the bottom plot by strokes. Would like to change top plot to multiple lines plot and maybe have a way of showing par for the course as well.
+
+##April 6th Beginning of Class
+Got a static plot of parallel coordinate plot but didn't love the way it looked. Tried to create a new data set that would plot ALL rounds by any player who has won the tournament but struggled. Need to create new variable called has won. Then a user could highlight a winners color to see better. 
