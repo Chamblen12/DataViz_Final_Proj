@@ -161,14 +161,21 @@ library(GGally)
 library(viridis)
 
 # Data set is provided by R natively
-data<- iris
-data2 <- newdata %>% filter(tournament.name == "Valspar Championship")%>%group_by(pos == 1)%>%summarise(winner = )
-data <- masters %>% mutate(player = as.factor(player))
-ggparcoord(data,
-    columns = 15:20, groupColumn = 9
-    ) 
+iris_data<- iris
+
+Valspar <- newdata %>% filter(tournament.name == "Valspar Championship")
+
+#%>%group_by(player)%>% mutate(haswon = if_else(min(pos) == 1,
+                          #true = "yes",
+                          #false = "no"))
+  
+
+
+
+
+
 # Plot
-ggparcoord(data,
+ggparcoord(data2,
     columns = 15:20, groupColumn = 9, order = "anyClass",
     showPoints = TRUE, 
     title = "Parallel Coordinate Plot for Past Winners",
@@ -179,5 +186,27 @@ ggparcoord(data,
   theme(
     plot.title = element_text(size=10)
   )
+
+
+```
+
+REPREX
+```{r}
+library(tidyverse)
+test_df2 <- tibble(player = c("Caleb", "Caleb", "Caleb","Jeff","Bob"),
+                   standings = c(1, 10, 7, 5, 1))
+test_df2 
+
+test_df2 %>% group_by(player) %>%
+  mutate(haswon = if_else(min(standings) == 1,
+                          true = "yes",
+                          false = "no"))
+
+
+
+test_want <-tibble(player = c("Caleb", "Caleb", "Caleb","Jeff","Bob"),
+                   standings = c(1, 10, 7, 5, 1),
+                   haswon = c("yes","yes","yes","no","yes"))
+test_want
 ```
 

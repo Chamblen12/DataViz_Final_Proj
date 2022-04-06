@@ -32,3 +32,6 @@ Got both plots to show up and managed to order the bottom plot by strokes. Would
 
 ##April 6th Beginning of Class
 Got a static plot of parallel coordinate plot but didn't love the way it looked. Tried to create a new data set that would plot ALL rounds by any player who has won the tournament but struggled. Need to create new variable called has won. Then a user could highlight a winners color to see better. 
+
+## April 6th end of class
+Worked on creating a variable has won to try and plot all rounds played by winners. Got Reprex to work but still problems apllying it. 

@@ -17,3 +17,7 @@ Doing MLB salary with multiple tabs for year as well as potentially a graph for 
 ## April 4
 
 Doing a map of house prices and related statistics in boston with leafly. Problem when zooming in on ony 2 houses in an area. Wants to compare it to NYC.
+
+## April 6
+
+DOing a shiny app on NHL data. Looking at power play goals vs ice time. Problem with dataset not plotting shader for all teams
