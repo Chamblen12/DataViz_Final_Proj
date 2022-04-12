@@ -35,3 +35,6 @@ Got a static plot of parallel coordinate plot but didn't love the way it looked.
 
 ## April 6th end of class
 Worked on creating a variable has won to try and plot all rounds played by winners. Got Reprex to work but still problems apllying it. 
+
+##April 11th Before class 
+Got variable haswon to wotk and got plot to work. However didn't like the plot still so researched other presentation formats. Got boxplot and parallel lines on same plot but very crowded. Looking for other options...

@@ -165,9 +165,15 @@ iris_data<- iris
 
 Valspar <- newdata %>% filter(tournament.name == "Valspar Championship")
 
-#%>%group_by(player)%>% mutate(haswon = if_else(min(pos) == 1,
-                          #true = "yes",
-                          #false = "no"))
+Valspar <- Valspar %>% mutate(pos = replace(pos,is.na(pos),100))
+ 
+Valspar <- Valspar %>% group_by(player)%>% 
+   mutate(haswon = if_else(min(pos) == 1, 
+                          true = "yes",
+                          false = "no"))
+
+Valspar_HW <- Valspar %>% filter(haswon == "yes")%>% mutate(player = fct_reorder(player, desc(strokes)))
+
   
 
 
@@ -175,11 +181,13 @@ Valspar <- newdata %>% filter(tournament.name == "Valspar Championship")
 
 
 # Plot
-ggparcoord(data2,
+ggparcoord(Valspar_HW,
     columns = 15:20, groupColumn = 9, order = "anyClass",
+    #scale="uniminmax",
     showPoints = TRUE, 
-    title = "Parallel Coordinate Plot for Past Winners",
-    alphaLines = 0.3
+    #splineFactor = TRUE,
+    boxplot = TRUE,
+    title = "Parallel Coordinate Plot for Past Winners"
     ) + 
   scale_color_viridis(discrete=TRUE) +
   theme_ipsum()+
@@ -187,12 +195,13 @@ ggparcoord(data2,
     plot.title = element_text(size=10)
   )
 
-
 ```
+
 
 REPREX
 ```{r}
 library(tidyverse)
+
 test_df2 <- tibble(player = c("Caleb", "Caleb", "Caleb","Jeff","Bob"),
                    standings = c(1, 10, 7, 5, 1))
 test_df2 
