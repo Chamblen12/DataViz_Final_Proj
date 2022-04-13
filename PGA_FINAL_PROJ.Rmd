@@ -219,3 +219,18 @@ test_want <-tibble(player = c("Caleb", "Caleb", "Caleb","Jeff","Bob"),
 test_want
 ```
 
+```{r}
+Scotty <- newdata %>% filter(player == "Scottie Scheffler")%>% mutate(made_cut = if_else(made_cut == 1,
+                          true = "Made cut",
+                          false = "Missed cut"))
+
+
+
+
+Scotty_WM <- Scotty %>% filter(tournament.name == "Waste Management Phoenix Open")%>%group_by(made_cut)%>%summarise(ncut_made = n())
+
+ggplot(data = Scotty_WM, aes(x= made_cut)) + 
+  geom_bar(stat = "identity")+
+  scale_fill_manual(ncut_made = c("green", "red") )
+```
+

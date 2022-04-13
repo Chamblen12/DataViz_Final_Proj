@@ -38,3 +38,6 @@ Worked on creating a variable has won to try and plot all rounds played by winne
 
 ##April 11th Before class 
 Got variable haswon to wotk and got plot to work. However didn't like the plot still so researched other presentation formats. Got boxplot and parallel lines on same plot but very crowded. Looking for other options...
+
+##April 13th Before class 
+Wanted to create another tab that had a pie chart of the selected golfers made cuts percentage but found troubles displaying the count/percent. Moved onto a simple boxplot 
