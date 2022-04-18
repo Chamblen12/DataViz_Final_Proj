@@ -21,3 +21,7 @@ Doing a map of house prices and related statistics in boston with leafly. Proble
 ## April 6
 
 DOing a shiny app on NHL data. Looking at power play goals vs ice time. Problem with dataset not plotting shader for all teams
+
+##April 18th
+
+Charlie working on scraping ecac hockey data and creating a function that allows user to create grpahs without knowing how to use R. 

@@ -45,3 +45,6 @@ Wanted to create another tab that had a pie chart of the selected golfers made c
 ##April 18th Before Class
 Got boxplot to work finally. Worked on adding it to shiny app under a new tab.
 
+##April 18th After Class
+Got made cuts plot to work in shiny by itself now just need to add it to another tab. Maybe add a comparison to check two players against eachother. 
+

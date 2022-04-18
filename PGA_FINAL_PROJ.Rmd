@@ -50,6 +50,11 @@ ui <- fluidPage(
                                choices = levels(
                                   factor(newdata$tournament.name)),
                                selected = ("Valspar Championship"))),
+              selectizeInput(inputId ="Playerchoice",
+                               label = "Choose a Player",
+                               choices = levels(
+                                  factor(newdata$player)),
+                               selected = ("Scottie Scheffler"))),
                   mainPanel(plotOutput(outputId = "majorplot"))))),
         tabsetPanel(
         id = "tabset",
@@ -107,11 +112,9 @@ server <- function(input, output, session) {
                           true = "Made cut",
                           false = "Missed cut"))
 
-
-
-
 Scotty_WM <- Scotty %>% filter(tournament.name == "Waste Management Phoenix Open")%>%group_by(made_cut)%>%summarise(ncut_made = n())
   })
+  
   
   output$cut_plot <- renderPlot({
     
@@ -266,5 +269,118 @@ ggplot(data = Scotty_WM, aes(x= made_cut)) +
   scale_fill_manual(values = c("Made cut" = "green", "Missed cut" = "red"))
 
 
+```
+
+
+```{r}
+library(shiny)
+
+ui <- fluidPage(
+        fluidRow(
+          column(6,
+            sidebarLayout(
+              sidebarPanel(
+                selectizeInput(inputId ="Tournychoice",
+                               label = "Choose a Tournament",
+                               choices = levels(
+                                  factor(newdata$tournament.name)),
+                               selected = ("Valspar Championship"))),
+                  mainPanel(plotOutput(outputId = "majorplot"))))),
+        fluidRow(
+          column(8,
+            plotOutput(outputId = "minorplot"))
+  
+)
+)
+
+
+server <- function(input, output, session) {
+  
+  output$panel <- renderText({
+    paste("Current panel: ", input$tabset)
+  })
+  
+  df_update <- reactive({
+    
+    df_stat <- newdata %>% filter(tournament.name == input$Tournychoice) 
+    
+    df_win <- df_stat %>% filter(pos == 1)%>%
+      pivot_longer(c(15:20), 
+                   names_to = "Stat_cat", values_to = "response") %>%
+      mutate(play_yr = fct_reorder(play_yr, desc(strokes))) 
+
+  })
+  
+  
+  output$majorplot <- renderPlot({
+    
+    ggplot(data = df_update(), aes(x = Stat_cat, y = response)) +
+      geom_boxplot() +
+      labs(x = "Strokes gained Catagory", 
+           y = "Strokes Gained on the Field")
+  })
+  
+  output$minorplot <- renderPlot({
+    
+    ggplot(data = df_update(), aes(x = play_yr, y = strokes))+
+      geom_point() + 
+      geom_segment( aes(x= play_yr, xend= play_yr, y=0, yend=strokes))+
+      coord_flip()+
+      geom_text(aes(label = strokes), vjust = 1.5, colour = "black")+
+      ylim(0,288)
+    
+    
+  })
+  
+}
+
+shinyApp(ui, server)
+```
+
+```{r}
+ui <- fluidPage(
+            sidebarLayout(
+              sidebarPanel(
+                selectizeInput(inputId ="Playerchoice",
+                               label = "Choose a Player",
+                               choices = levels(
+                                  factor(newdata$player)),
+                               selected = ("Scottie Scheffler")),
+                selectizeInput(inputId = "Tournament",
+                               label = "Choose a Tournament",
+                               choices = levels(
+                                 factor(newdata$tournament.name)),
+                               selected = ("Valspar Championship"))),
+              mainPanel(plotOutput(outputId = "majorplot"))))
+        
+
+
+server <- function(input, output, session) {
+  
+  df_update2 <- reactive({
+    
+    Scotty <- newdata %>% filter(player == input$Playerchoice) %>%                mutate(made_cut = if_else(made_cut == 1,
+                          true = "Made cut",
+                          false = "Missed cut"))
+    
+    Scotty <- Scotty %>%group_by(made_cut)%>%summarise(ncut_made = n())
+
+  Scotty_WM <- Scotty %>% 
+  filter(tournament.name == input$Tournament)%>%   group_by(made_cut)%>%summarise(ncut_made = n())
+    
+  })
+  
+  
+  output$majorplot <- renderPlot({
+    ggplot(df_update2(), aes(x = made_cut, y = ncut_made, fill = made_cut)) +
+  geom_col()+
+  scale_fill_manual(values = c("Made cut" = "green", "Missed cut" = "red"))
+    
+  })
+  
+  
+}
+
+shinyApp(ui, server)
 ```
 
