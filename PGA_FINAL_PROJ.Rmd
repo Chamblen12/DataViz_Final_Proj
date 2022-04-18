@@ -51,6 +51,11 @@ ui <- fluidPage(
                                   factor(newdata$tournament.name)),
                                selected = ("Valspar Championship"))),
                   mainPanel(plotOutput(outputId = "majorplot"))))),
+        tabsetPanel(
+        id = "tabset",
+        tabPanel("panel 1", "one"),
+        tabPanel("panel 2", "two")
+      ),
         fluidRow(
           column(8,
             plotOutput(outputId = "minorplot"))
@@ -60,6 +65,10 @@ ui <- fluidPage(
 
 
 server <- function(input, output, session) {
+  
+  output$panel <- renderText({
+    paste("Current panel: ", input$tabset)
+  })
   
   df_update <- reactive({
     
@@ -91,6 +100,25 @@ server <- function(input, output, session) {
       ylim(0,288)
     
     
+  })
+  
+  df_update2 <- reactive({
+    df_scotty <- newdata %>% filter(player == "Scottie Scheffler")%>% mutate(made_cut = if_else(made_cut == 1,
+                          true = "Made cut",
+                          false = "Missed cut"))
+
+
+
+
+Scotty_WM <- Scotty %>% filter(tournament.name == "Waste Management Phoenix Open")%>%group_by(made_cut)%>%summarise(ncut_made = n())
+  })
+  
+  output$cut_plot <- renderPlot({
+    
+    ggplot(Scotty_WM, 
+           aes(x = made_cut, y = ncut_made, fill = made_cut)) +
+  geom_col()+
+  scale_fill_manual(values = c("Made cut" = "green", "Missed cut" = "red"))
   })
   
   
@@ -129,8 +157,8 @@ library(colormap)
 data_compare <- newdata[c(9,15:20)]
 data_compare <- data_compare %>% filter(player == "Jon Rahm" | player == "Jordan Spieth")
 
-JJ <- data_compare %>% group_by(player) %>%
   summarise(avg_putt = sum(sg_putt))
+JJ <- data_compare %>% group_by(player) %>%
 
 
 
@@ -230,7 +258,13 @@ Scotty <- newdata %>% filter(player == "Scottie Scheffler")%>% mutate(made_cut =
 Scotty_WM <- Scotty %>% filter(tournament.name == "Waste Management Phoenix Open")%>%group_by(made_cut)%>%summarise(ncut_made = n())
 
 ggplot(data = Scotty_WM, aes(x= made_cut)) + 
-  geom_bar(stat = "identity")+
-  scale_fill_manual(ncut_made = c("green", "red") )
+  geom_bar(stat = "identity")
+  #scale_fill_manual(ncut_made = c("green", "red") )
+  
+ ggplot(Scotty_WM, aes(x = made_cut, y = ncut_made, fill = made_cut)) +
+  geom_col()+
+  scale_fill_manual(values = c("Made cut" = "green", "Missed cut" = "red"))
+
+
 ```
 

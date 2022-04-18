@@ -41,3 +41,7 @@ Got variable haswon to wotk and got plot to work. However didn't like the plot s
 
 ##April 13th Before class 
 Wanted to create another tab that had a pie chart of the selected golfers made cuts percentage but found troubles displaying the count/percent. Moved onto a simple boxplot 
+
+##April 18th Before Class
+Got boxplot to work finally. Worked on adding it to shiny app under a new tab.
+
