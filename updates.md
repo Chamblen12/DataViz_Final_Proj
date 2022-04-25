@@ -48,3 +48,6 @@ Got boxplot to work finally. Worked on adding it to shiny app under a new tab.
 ##April 18th After Class
 Got made cuts plot to work in shiny by itself now just need to add it to another tab. Maybe add a comparison to check two players against eachother. 
 
+## APril 25th Before Class
+Still struggling to get second tab to work. Played with adding comparison plot for made cuts for tournmanet, all time avg, and comparing to another player. 
+

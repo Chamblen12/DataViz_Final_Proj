@@ -251,23 +251,29 @@ test_want
 ```
 
 ```{r}
-Scotty <- newdata %>% filter(player == "Scottie Scheffler")%>% mutate(made_cut = if_else(made_cut == 1,
+Scotty_P <- newdata %>% filter(player == "Scottie Scheffler" |player == "Patrick Cantlay")%>% mutate(made_cut = if_else(made_cut == 1,
                           true = "Made cut",
                           false = "Missed cut"))
 
 
 
 
-Scotty_WM <- Scotty %>% filter(tournament.name == "Waste Management Phoenix Open")%>%group_by(made_cut)%>%summarise(ncut_made = n())
+ScottyP_WM <- Scotty_P %>% filter(tournament.name == "Waste Management Phoenix Open")%>%group_by(player)%>%group_by(made_cut)%>%summarise(ncut_made = n())
+
+sScotty_WM <- Scotty %>%group_by(made_cut)%>%summarise(ncut_made_avg = n())
+
 
 ggplot(data = Scotty_WM, aes(x= made_cut)) + 
   geom_bar(stat = "identity")
   #scale_fill_manual(ncut_made = c("green", "red") )
   
- ggplot(Scotty_WM, aes(x = made_cut, y = ncut_made, fill = made_cut)) +
+ ggplot(ScottyP_WM, aes(x = made_cut, y = ncut_made, fill = m)) +
   geom_col()+
   scale_fill_manual(values = c("Made cut" = "green", "Missed cut" = "red"))
 
+ 
+ 
+ 
 
 ```
 
