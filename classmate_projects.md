@@ -25,3 +25,7 @@ DOing a shiny app on NHL data. Looking at power play goals vs ice time. Problem 
 ##April 18th
 
 Charlie working on scraping ecac hockey data and creating a function that allows user to create grpahs without knowing how to use R. 
+
+## April 25th
+
+Kyle working on NFL eagles data. Shiny app has 4 tabs and allows user to look at offense/defense/special team/ and weeks. 

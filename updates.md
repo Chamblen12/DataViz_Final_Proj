@@ -51,3 +51,5 @@ Got made cuts plot to work in shiny by itself now just need to add it to another
 ## APril 25th Before Class
 Still struggling to get second tab to work. Played with adding comparison plot for made cuts for tournmanet, all time avg, and comparing to another player. 
 
+##Fixed second page pf shiny and know how to combine now. Looked for larger dataset to scrape but no luck
+
