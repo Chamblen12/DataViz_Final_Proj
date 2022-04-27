@@ -258,9 +258,9 @@ Scotty_P <- newdata %>% filter(player == "Scottie Scheffler" |player == "Patrick
 
 
 
-ScottyP_WM <- Scotty_P %>% filter(tournament.name == "Waste Management Phoenix Open")%>%group_by(player)%>%group_by(made_cut)%>%summarise(ncut_made = n())
 
-sScotty_WM <- Scotty %>%group_by(made_cut)%>%summarise(ncut_made_avg = n())
+ScottyP_WM <- Scotty_P %>% filter(tournament.name == "Waste Management Phoenix Open")%>%group_by(player)%>%summarise(ncut_made = n())
+Scotty_WM <- Scotty %>%group_by(made_cut)%>%summarise(ncut_made_avg = n())
 
 
 ggplot(data = Scotty_WM, aes(x= made_cut)) + 
@@ -329,7 +329,7 @@ server <- function(input, output, session) {
   output$minorplot <- renderPlot({
     
     ggplot(data = df_update(), aes(x = play_yr, y = strokes))+
-      geom_point() + 
+      geom_point(size=3, color="blue", fill=alpha("yellow", 0.3), alpha=0.7, shape=21, stroke=2) + 
       geom_segment( aes(x= play_yr, xend= play_yr, y=0, yend=strokes))+
       coord_flip()+
       geom_text(aes(label = strokes), vjust = 1.5, colour = "black")+
@@ -369,7 +369,7 @@ server <- function(input, output, session) {
                           true = "Made cut",
                           false = "Missed cut"))
     
-    Scotty <- Scotty %>%group_by(made_cut)%>%summarise(ncut_made = n())
+    #Scotty <- Scotty %>%group_by(made_cut)%>%summarise(ncut_made = n())
 
   Scotty_WM <- Scotty %>% 
   filter(tournament.name == input$Tournament)%>%   group_by(made_cut)%>%summarise(ncut_made = n())
