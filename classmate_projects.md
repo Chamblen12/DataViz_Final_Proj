@@ -29,3 +29,7 @@ Charlie working on scraping ecac hockey data and creating a function that allows
 ## April 25th
 
 Kyle working on NFL eagles data. Shiny app has 4 tabs and allows user to look at offense/defense/special team/ and weeks. 
+
+##April 27th
+
+DOing an MLS shiny app, used themes well and should add to my project. Mostly focused on goal and projected goal outputs. 

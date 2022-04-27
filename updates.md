@@ -56,3 +56,6 @@ Still struggling to get second tab to work. Played with adding comparison plot f
 ## April 27th Before Class
 Pretty up the first page of shint, treid adding a comparative boxplot but still not working. multiple pages still not working
 
+##April 27th After Class 
+Actually added together the two tabs. Working on last plot where a user can see a players tournament stat averages to pga tour avg on a course
+
