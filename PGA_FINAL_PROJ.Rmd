@@ -8,416 +8,46 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
+# libraries
 library(tidyverse)
 library(ggplot2)
 library(readxl)
-library(readxl)
+library(viridis)
+library(shiny)
+library(shinythemes)
+```
+
+
+```{r}
+# data formatting
 data <- read.csv("PGA_17_22.csv")
 newdata <- data[c(1:5,12:14,21,25:27,29,31:37)]
 newdata$play_yr <- paste(newdata$player, newdata$season)
-```
 
-```{r}
-masters <- newdata %>% filter(tournament.name == "Valspar Championship") %>%
-  filter(pos == 1)
-
-tidy_tourny <-masters %>%
-  pivot_longer(c(15:20), names_to = "Stat_cat", values_to = "response") 
-
-  ggplot(data = tidy_tourny, aes(y = response, x = Stat_cat)) +
-  geom_boxplot() +
-  #facet_wrap(vars(player))+
-  labs(x = "Strokes gained Catagory", y = "Strokes Gained on the Field")
+newdata <- newdata %>%
+rename(Putting = sg_putt)%>%
+rename(Total = sg_total) %>%
+rename(Driving = sg_ott)%>%
+rename(Approach = sg_app)%>%
+rename(Chipping = sg_arg)%>%
+rename(Not_Putting = sg_t2g)
 
 ```
 
 
 ```{r}
-player_year <- newdata %>% mutate(plyr_yr = as.character(player) + as.character(season))
-```
-
-## user selects tournament and sees avg box plot of past winners in each catagpry
-```{r}
-library(shiny)
-
-ui <- fluidPage(
-        fluidRow(
-          column(6,
-            sidebarLayout(
-              sidebarPanel(
-                selectizeInput(inputId ="Tournychoice",
-                               label = "Choose a Tournament",
-                               choices = levels(
-                                  factor(newdata$tournament.name)),
-                               selected = ("Valspar Championship"))),
-              selectizeInput(inputId ="Playerchoice",
-                               label = "Choose a Player",
-                               choices = levels(
-                                  factor(newdata$player)),
-                               selected = ("Scottie Scheffler"))),
-                  mainPanel(plotOutput(outputId = "majorplot"))))),
-        tabsetPanel(
-        id = "tabset",
-        tabPanel("panel 1", "one"),
-        tabPanel("panel 2", "two")
-      ),
-        fluidRow(
-          column(8,
-            plotOutput(outputId = "minorplot"))
-  
-)
-)
-
-
-server <- function(input, output, session) {
-  
-  output$panel <- renderText({
-    paste("Current panel: ", input$tabset)
-  })
-  
-  df_update <- reactive({
-    
-    df_stat <- newdata %>% filter(tournament.name == input$Tournychoice) 
-    
-    df_win <- df_stat %>% filter(pos == 1)%>%
-      pivot_longer(c(15:20), 
-                   names_to = "Stat_cat", values_to = "response") %>%
-      mutate(play_yr = fct_reorder(play_yr, desc(strokes))) 
-
-  })
-  
-  
-  output$majorplot <- renderPlot({
-    
-    ggplot(data = df_update(), aes(x = Stat_cat, y = response)) +
-      geom_boxplot() +
-      labs(x = "Strokes gained Catagory", 
-           y = "Strokes Gained on the Field")
-  })
-  
-  output$minorplot <- renderPlot({
-    
-    ggplot(data = df_update(), aes(x = play_yr, y = strokes))+
-      geom_point() + 
-      geom_segment( aes(x= play_yr, xend= play_yr, y=0, yend=strokes))+
-      coord_flip()+
-      geom_text(aes(label = strokes), vjust = 1.5, colour = "black")+
-      ylim(0,288)
-    
-    
-  })
-  
-  df_update2 <- reactive({
-    df_scotty <- newdata %>% filter(player == "Scottie Scheffler")%>% mutate(made_cut = if_else(made_cut == 1,
-                          true = "Made cut",
-                          false = "Missed cut"))
-
-Scotty_WM <- Scotty %>% filter(tournament.name == "Waste Management Phoenix Open")%>%group_by(made_cut)%>%summarise(ncut_made = n())
-  })
-  
-  
-  output$cut_plot <- renderPlot({
-    
-    ggplot(Scotty_WM, 
-           aes(x = made_cut, y = ncut_made, fill = made_cut)) +
-  geom_col()+
-  scale_fill_manual(values = c("Made cut" = "green", "Missed cut" = "red"))
-  })
-  
-  
-}
-
-shinyApp(ui, server)
-
-```
-
-
-
-
-```{r}
-masters <- masters %>% mutate(player = fct_reorder(player, desc(strokes)))
-
-ggplot(data = masters, aes(x = player, y = strokes))+
-  geom_point() + 
-  geom_segment( aes(x= player, xend= player, y=0, yend=strokes))+
-  coord_flip()+
-  geom_text(aes(label = strokes), vjust = 1.5, colour = "black")+
-  ylim(0,288)
-
-```
-
-## graph of last 6 winners score 
-
-
-```{r}
-library(tidyverse)
-library(viridis)
-library(patchwork)
-library(hrbrthemes)
-library(fmsb)
-library(colormap)
-
-data_compare <- newdata[c(9,15:20)]
-data_compare <- data_compare %>% filter(player == "Jon Rahm" | player == "Jordan Spieth")
-
-  summarise(avg_putt = sum(sg_putt))
-JJ <- data_compare %>% group_by(player) %>%
-
-
-
-colors_border=c( rgb(0.2,0.5,0.5,0.9), rgb(0.8,0.2,0.5,0.9)  )
-colors_in=c( rgb(0.2,0.5,0.5,0.4), rgb(0.8,0.2,0.5,0.4)  )
-
-# Custom the radarChart !
-radarchart( data_compare, axistype=1, 
-
-  #custom polygon
-  pcol=colors_border , pfcol=colors_in , plwd=4, plty=1 , 
-
-  #custom the grid
-  cglcol="grey", cglty=1, axislabcol="grey", caxislabels=seq(0,20,5), cglwd=1.1,
-
-  #custom labels
-  vlcex=0.8 
-  )
-
-# Legend
-legend(x=0.85, y=1, legend = c("Golfer1", "Golfer2"), bty = "n", pch=20 , col=colors_border , text.col = "black", cex=0.9, pt.cex=1.6)
-```
-due to missing data ?
-
-```{r}
-library(hrbrthemes)
-library(GGally)
-library(viridis)
-
-# Data set is provided by R natively
-iris_data<- iris
-
-Valspar <- newdata %>% filter(tournament.name == "Valspar Championship")
-
-Valspar <- Valspar %>% mutate(pos = replace(pos,is.na(pos),100))
- 
-Valspar <- Valspar %>% group_by(player)%>% 
-   mutate(haswon = if_else(min(pos) == 1, 
-                          true = "yes",
-                          false = "no"))
-
-Valspar_HW <- Valspar %>% filter(haswon == "yes")%>% mutate(player = fct_reorder(player, desc(strokes)))
-
-  
-
-
-
-
-
-# Plot
-ggparcoord(Valspar_HW,
-    columns = 15:20, groupColumn = 9, order = "anyClass",
-    #scale="uniminmax",
-    showPoints = TRUE, 
-    #splineFactor = TRUE,
-    boxplot = TRUE,
-    title = "Parallel Coordinate Plot for Past Winners"
-    ) + 
-  scale_color_viridis(discrete=TRUE) +
-  theme_ipsum()+
-  theme(
-    plot.title = element_text(size=10)
-  )
-
-```
-
-
-REPREX
-```{r}
-library(tidyverse)
-
-test_df2 <- tibble(player = c("Caleb", "Caleb", "Caleb","Jeff","Bob"),
-                   standings = c(1, 10, 7, 5, 1))
-test_df2 
-
-test_df2 %>% group_by(player) %>%
-  mutate(haswon = if_else(min(standings) == 1,
-                          true = "yes",
-                          false = "no"))
-
-
-
-test_want <-tibble(player = c("Caleb", "Caleb", "Caleb","Jeff","Bob"),
-                   standings = c(1, 10, 7, 5, 1),
-                   haswon = c("yes","yes","yes","no","yes"))
-test_want
-```
-
-```{r}
-Scotty_P <- newdata %>% filter(player == "Scottie Scheffler" |player == "Patrick Cantlay")%>% mutate(made_cut = if_else(made_cut == 1,
-                          true = "Made cut",
-                          false = "Missed cut"))
-
-
-
-
-
-ScottyP_WM <- Scotty_P %>% filter(tournament.name == "Waste Management Phoenix Open")%>%group_by(player)%>%summarise(ncut_made = n())
-Scotty_WM <- Scotty %>%group_by(made_cut)%>%summarise(ncut_made_avg = n())
-
-
-ggplot(data = Scotty_WM, aes(x= made_cut)) + 
-  geom_bar(stat = "identity")
-  #scale_fill_manual(ncut_made = c("green", "red") )
-  
- ggplot(ScottyP_WM, aes(x = made_cut, y = ncut_made, fill = m)) +
-  geom_col()+
-  scale_fill_manual(values = c("Made cut" = "green", "Missed cut" = "red"))
-
- 
- 
- 
-
-```
-
-
-```{r}
-library(shiny)
-
-ui <- fluidPage(
-        fluidRow(
-          column(6,
-            sidebarLayout(
-              sidebarPanel(
-                selectizeInput(inputId ="Tournychoice",
-                               label = "Choose a Tournament",
-                               choices = levels(
-                                  factor(newdata$tournament.name)),
-                               selected = ("Valspar Championship"))),
-                  mainPanel(plotOutput(outputId = "majorplot"))))),
-        fluidRow(
-          column(8,
-            plotOutput(outputId = "minorplot"))
-  
-)
-)
-
-
-server <- function(input, output, session) {
-  
-  output$panel <- renderText({
-    paste("Current panel: ", input$tabset)
-  })
-  
-  df_update <- reactive({
-    
-    df_stat <- newdata %>% filter(tournament.name == input$Tournychoice) 
-    
-    df_win <- df_stat %>% filter(pos == 1)%>%
-      pivot_longer(c(15:20), 
-                   names_to = "Stat_cat", values_to = "response") %>%
-      mutate(play_yr = fct_reorder(play_yr, desc(strokes))) 
-
-  })
-  
-  
-  output$majorplot <- renderPlot({
-    
-    ggplot(data = df_update(), aes(x = Stat_cat, y = response)) +
-      geom_boxplot() +
-      labs(x = "Strokes gained Catagory", 
-           y = "Strokes Gained on the Field")
-  })
-  
-  output$minorplot <- renderPlot({
-    
-    ggplot(data = df_update(), aes(x = play_yr, y = strokes))+
-      geom_point(size=3, color="blue", fill=alpha("yellow", 0.3), alpha=0.7, shape=21, stroke=2) + 
-      geom_segment( aes(x= play_yr, xend= play_yr, y=0, yend=strokes))+
-      coord_flip()+
-      geom_text(aes(label = strokes), vjust = 1.5, colour = "black")+
-      ylim(0,288)
-    
-    
-  })
-  
-}
-
-shinyApp(ui, server)
-```
-
-```{r}
-ui <- fluidPage(
-            sidebarLayout(
-              sidebarPanel(
-                selectizeInput(inputId ="Playerchoice",
-                               label = "Choose a Player",
-                               choices = levels(
-                                  factor(newdata$player)),
-                               selected = ("Scottie Scheffler")),
-                selectizeInput(inputId = "Tournament",
-                               label = "Choose a Tournament",
-                               choices = levels(
-                                 factor(newdata$tournament.name)),
-                               selected = ("Valspar Championship"))),
-              mainPanel(plotOutput(outputId = "majorplot"))))
-        
-
-
-server <- function(input, output, session) {
-  
-  df_update2 <- reactive({
-    
-    Scotty <- newdata %>% filter(player == input$Playerchoice) %>%                mutate(made_cut = if_else(made_cut == 1,
-                          true = "Made cut",
-                          false = "Missed cut"))
-    
-    #Scotty <- Scotty %>%group_by(made_cut)%>%summarise(ncut_made = n())
-
-  Scotty_WM <- Scotty %>% 
-  filter(tournament.name == input$Tournament)%>%   group_by(made_cut)%>%summarise(ncut_made = n())
-    
-  })
-  
-  
-  output$majorplot <- renderPlot({
-    ggplot(df_update2(), aes(x = made_cut, y = ncut_made, fill = made_cut)) +
-  geom_col()+
-  scale_fill_manual(values = c("Made cut" = "green", "Missed cut" = "red"))
-    
-  })
-  
-  
-}
-
-shinyApp(ui, server)
-```
-
-
-```{r}
-Player <- newdata %>% filter(player == "Brian Harman") %>% summarise(putt_avg = mean(sg_putt, na.rm = TRUE))
-
-Player2 <- newdata %>%summarise(green_avg = mean(sg_arg, na.rm = TRUE))
-
-Player <- left_join(Player,Player2)
-
-summarise(approach_avg = mean(sg_app, na.rm = TRUE))%>%
-summarise(Tee_avg = mean(sg_ott, na.rm = TRUE))%>%
-summarise(nonPutt_avg = mean(sg_t2g, na.rm = TRUE))%>%
-summarise(Total_avg = mean(sg_total, na.rm = TRUE))
-
-
-
-```
-
-```{r}
-library(shiny)
+# shiny app
 
 ui <- tabsetPanel(
         tabPanel("Tournament Info",
-          fluidPage(
-          fluidRow(
-            column(6,
+                 
+          fluidPage(theme = shinytheme("superhero"),
+           fluidRow(
+            column(12,
+                   
               sidebarLayout(
                 sidebarPanel(
-                  
+                
                   selectizeInput(
                     inputId ="Tournychoice",
                     label = "Choose a Tournament",
@@ -426,32 +56,61 @@ ui <- tabsetPanel(
                     selected = ("Valspar Championship"))),
               
                   mainPanel(plotOutput(outputId = "majorplot"))))),
+          br(),
+          br(),
 
           fluidRow(
             column(8,
-              plotOutput(outputId = "minorplot"))))),
+              plotOutput(outputId = "minorplot", height = 250))))),
         
         
-          
+          # page 2
           tabPanel("Golfer Info",
-            
+          
               sidebarPanel(
                 selectizeInput(
                   inputId ="Playerchoice",
                   label = "Choose a Player",
                   choices = levels(
                   factor(newdata$player)),
-                  selected = ("Scottie Scheffler")),
+                  selected = ("Rory Mcilroy")),
                 
                 selectizeInput(
                   inputId = "Tournament",
                   label = "Choose a Tournament",
                   choices = levels(
                   factor(newdata$tournament.name)),
-                  selected = ("Valspar Championship")),
+                  selected = ("Wells Fargo Championship")),
               
-              mainPanel(plotOutput(outputId = "majorplot2"))))
-            
+              mainPanel(plotOutput(outputId = "majorplot2", 
+                                   width = "300%"))),
+                tableOutput(outputId = "minorplot2")),
+        
+        # page 3
+        tabPanel("Player Comparison",
+                 
+                
+                sidebarPanel(
+                selectizeInput(
+                  inputId ="PC",
+                  label = "Choose a Player",
+                  choices = levels(
+                  factor(newdata$player)),
+                  selected = ("Scottie Scheffler")),
+                
+                selectizeInput(
+                  inputId = "PC2",
+                  label = "Choose another Player to Compare",
+                  choices = levels(
+                  factor(newdata$player)),
+                  selected = ("Patrick Cantlay")),
+                
+                  
+                
+                 mainPanel(plotOutput(outputId = "graph", 
+                                      width = "300%"))),
+                    tableOutput(outputId = "table"))
+
 )
   
 
@@ -460,27 +119,66 @@ ui <- tabsetPanel(
 
 server <- function(input, output, session) {
   
-  # reactive for graph 2
+  #reactive for graph page 3
+  SP_update <- reactive({
+    
+    Scotty_P <- newdata %>% filter(player == input$PC |
+                                   player == input$PC2)
+
+  Scotty_P <- Scotty_P %>% group_by(player)%>% 
+    summarise(Madecut_Percent = mean(made_cut))
+  })
+  
+  #reactive for table page 3
+   table_update <- reactive({
+     
+     Scotty_P <- newdata %>% filter(player == input$PC |
+                                   player == input$PC2)
+
+     
+     df <- Scotty_P %>% group_by(player) %>%
+    summarise(Approach_avg = mean(Approach, na.rm = TRUE),
+              Putt_avg = mean(Putting, na.rm = TRUE),
+              Driving_avg = mean(Driving, na.rm = TRUE),
+              Chipping_avg = mean(Chipping, na.rm = TRUE),
+              nonPutt_avg = mean(Not_Putting, na.rm = TRUE),
+              Total_avg = mean(Total, na.rm = TRUE)
+    )
+   })
+  
+  #reactive for table page 2
+  
+  pavg_update <- reactive({
+    
+    pavg <- newdata %>% filter(player == input$Playerchoice)%>%
+  filter(tournament.name == input$Tournament)%>%
+  mutate(Score_to_Par = strokes - hole_par)
+
+pavg <- pavg[c(1,13:20,22)]
+pavg <- pavg[, c(1, 2, 3, 10, 4,5,6,7,8,9)]
+
+  })
+  
+  # reactive for graph page 2
   df_update2 <- reactive({
     
     Scotty <- newdata %>% filter(player == input$Playerchoice) %>%                mutate(made_cut = if_else(made_cut == 1,
                           true = "Made cut",
                           false = "Missed cut"))
     
-    #Scotty <- Scotty %>%group_by(made_cut)%>%summarise(ncut_made = n())
 
-  Scotty_WM <- Scotty %>% 
-  filter(tournament.name == input$Tournament)%>%   group_by(made_cut)%>%summarise(ncut_made = n())
+    Scotty_WM <- Scotty %>% 
+      filter(tournament.name == input$Tournament)%>%     group_by(made_cut)%>%summarise(ncut_made = n())
     
-  
   })
-  # maybe needed for tab?
+  
+  # For selecting tab
   
   output$panel <- renderText({
     paste("Current panel: ", input$tabset)
   })
   
-  #reactive for page 1
+  #reactive for graph page 1
   df_update <- reactive({
     
     df_stat <- newdata %>% filter(tournament.name == input$Tournychoice) 
@@ -495,10 +193,16 @@ server <- function(input, output, session) {
   # First plot on first page
   output$majorplot <- renderPlot({
     
-    ggplot(data = df_update(), aes(x = Stat_cat, y = response)) +
+    ggplot(data = df_update(), aes(x = Stat_cat, y = response, fill = Stat_cat)) +
       geom_boxplot() +
       labs(x = "Strokes gained Catagory", 
-           y = "Strokes Gained on the Field")
+           y = "Strokes Gained on the Field")+
+      ggtitle("Looking at Strokes Gained
+              from all rounds played of Past Winners")+
+      scale_fill_viridis(discrete = TRUE, alpha=0.6) +
+      theme(legend.position="none")
+
+
   })
   
   
@@ -506,26 +210,57 @@ server <- function(input, output, session) {
   output$minorplot <- renderPlot({
     
     ggplot(data = df_update(), aes(x = play_yr, y = strokes))+
-      geom_point() + 
-      geom_segment( aes(x= play_yr, xend= play_yr, y=0, yend=strokes))+
+      geom_point(size = 4, shape = 23, color = "black", fill=alpha("black", 0.3)) + 
+      geom_segment( aes(x= play_yr, xend= play_yr, y=0, yend=strokes), size = 2, color = "red")+
       coord_flip()+
       geom_text(aes(label = strokes), vjust = 1.5, colour = "black")+
-      ylim(0,288)
+      ylim(0,288)+
+      labs(y = "Total Strokes", 
+           x = "Player and Year")+
+      ggtitle("Winners Scores from Last 8 Years")+
+      theme(axis.text.x = element_text(size =13))
     
     
   })
   
   
-  #Plot 1 on page 2
+  #Graph on page 2
   output$majorplot2 <- renderPlot({
-    ggplot(df_update2(), aes(x = made_cut, y = ncut_made, fill = made_cut)) +
-  geom_col()+
-  scale_fill_manual(values = c("Made cut" = "green", "Missed cut" = "red"))
+    
+    ggplot(df_update2(), 
+           aes(x = made_cut, y = ncut_made, fill = made_cut)) +
+    geom_col()+
+    scale_fill_manual(
+      values = c("Made cut" = "green", "Missed cut" = "red"))+
+      labs(y = "Number of Cuts",
+           x = " Cuts Made or Missed",
+           title = glue :: glue(input$Playerchoice, " Cut History at ", input$Tournament))
+     
     
   })
   
-}
-shinyApp(ui, server)
+  #graph on page 3
+  output$graph <- renderPlot({
+    
+    ggplot(SP_update(), 
+           aes(x = player, y = Madecut_Percent, fill = player)) +
+    geom_col()+
+    labs(y = "Made Cut Percentage", 
+           x = "Player",
+         title = glue::glue("Comparing ", input$PC, " and ", input$PC2 , " Made Cut %"))
+      
+    
 
+  })
+  # table page 2
+  output$minorplot2 <- renderTable(pavg_update())
+  
+
+  # table page 3
+  output$table <- renderTable(table_update())
+
+}
+
+shinyApp(ui, server)
 ```
 
